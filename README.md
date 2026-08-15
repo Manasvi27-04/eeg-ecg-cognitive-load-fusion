@@ -1,3 +1,57 @@
+# Attention-Based Multimodal EEG-ECG Fusion for Cognitive Load Assessment
+
+An attention-based deep learning framework that fuses EEG and ECG signals to
+classify driver cognitive load (mental workload), benchmarked against 16
+state-of-the-art baselines on the public CL-Drive dataset — achieving the
+highest accuracy across both binary and ternary classification, outperforming
+the strongest baseline by up to 7.20 percentage points.
+
+> **Note:** This repository currently documents the architecture, methodology,
+> and results of the project. Code is being cleaned up for public release —
+> check back for updates, or reach out if you'd like early access.
+
+## Motivation
+
+Driver drowsiness and mental overload are major contributors to road
+accidents. Camera-based and single-signal detection methods often aren't
+reliable enough on their own. This project combines two complementary
+physiological signals — EEG (brain activity) and ECG (heart activity) — since
+together they capture a fuller picture of cognitive state than either alone.
+
+## Dataset
+
+Uses the public **CL-Drive** dataset:
+- 21 subjects
+- EEG + ECG recorded via wearables during simulated driving
+- 3,035 labeled 10-second samples
+- Labels: Low / Medium / High mental workload
+
+No custom hardware or data collection was required — evaluation is entirely
+on this existing public benchmark.
+
+## Architecture
+
+**Pipeline:**
+
+```
+EEG Signal ──┐                                          ┌── Low
+             ├─► Per-Modality Feature Extraction         │
+ECG Signal ──┘   (Conv layers + CBAM Attention +          ├── Medium
+                  Instance Normalization)                 │
+                        │                                 └── High
+                        ▼
+              Self-Attention (per modality)
+                        │
+                        ▼
+        Bidirectional Cross-Attention (EEG ↔ ECG fusion)
+                        │
+                        ▼
+       Temporal Convolutional Network (TCN) — temporal modeling
+                        │
+                        ▼
+                  Classification Head
+```
+
 **Key design choices:**
 1. **Per-modality feature extraction** — dilated residual convolution blocks
    with CBAM attention and Instance Normalization, applied separately to EEG
