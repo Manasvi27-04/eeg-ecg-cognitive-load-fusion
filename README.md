@@ -1,33 +1,23 @@
 # Attention-Based Multimodal EEG-ECG Fusion for Cognitive Load Assessment
 
-An attention-based deep learning framework that fuses EEG and ECG signals to
-classify driver cognitive load (mental workload), benchmarked against 16
-state-of-the-art baselines on the public CL-Drive dataset — achieving the
-highest accuracy across both binary and ternary classification, outperforming
-the strongest baseline by up to 7.20 percentage points.
+An attention-based deep learning framework that fuses EEG and ECG signals to classify driver cognitive load (mental workload), benchmarked against 16 published baselines (2017–2023) on the public CL-Drive dataset — achieving the highest accuracy across all four evaluation settings (binary/ternary × 10-fold/LOSO), outperforming the strongest baseline by up to 9.73 percentage points.
 
-> **Note:** This repository currently documents the architecture, methodology,
-> and results of the project. Code is being cleaned up for public release —
-> check back for updates, or reach out if you'd like early access.
+Note: This repository currently documents the architecture, methodology, and results of the project. Code is being cleaned up for public release — check back for updates, or reach out if you'd like early access.
 
 ## Motivation
 
-Driver drowsiness and mental overload are major contributors to road
-accidents. Camera-based and single-signal detection methods often aren't
-reliable enough on their own. This project combines two complementary
-physiological signals — EEG (brain activity) and ECG (heart activity) — since
-together they capture a fuller picture of cognitive state than either alone.
+Driver drowsiness and mental overload are major contributors to road accidents. Camera-based and single-signal detection methods often aren't reliable enough on their own. This project combines two complementary physiological signals — EEG (brain activity) and ECG (heart activity) — since together they capture a fuller picture of cognitive state than either alone.
 
 ## Dataset
 
-Uses the public **CL-Drive** dataset:
-- 21 subjects
-- EEG + ECG recorded via wearables during simulated driving
-- 3,035 labeled 10-second samples
-- Labels: Low / Medium / High mental workload
+Uses the public CL-Drive dataset:
 
-No custom hardware or data collection was required — evaluation is entirely
-on this existing public benchmark.
+21 subjects
+EEG + ECG recorded via wearables during simulated driving
+3,035 labeled 10-second samples
+Labels: Low / Medium / High mental workload
+
+No custom hardware or data collection was required — evaluation is entirely on this existing public benchmark.
 
 ## Architecture
 
@@ -53,9 +43,7 @@ ECG Signal ──┘   (Conv layers + CBAM Attention +          ├── Medium
 ```
 
 **Key design choices:**
-1. **Per-modality feature extraction** — dilated residual convolution blocks
-   with CBAM attention and Instance Normalization, applied separately to EEG
-   and ECG.
+1. **Per-modality feature extraction** — dilated residual convolution blocks with CBAM attention and Instance Normalization, applied separately to EEG and ECG.
 2. **Self-attention** — each signal attends to itself before fusion.
 3. **Bidirectional cross-attention** — the core fusion mechanism; EEG and ECG
    representations attend to each other, allowing each modality to inform the
@@ -87,13 +75,27 @@ classification.
 
 ## Results
 
-Outperformed the previous best-published baseline (Park et al.) across **all
-4 evaluation settings**, by **4.7 to 10.3 percentage points**, with the
-largest gain on the hardest setting (ternary classification, LOSO).
+Evaluated against 16 published EEG/ECG baselines (2017–2023) on the CL-Drive dataset (21 subjects), under a unified protocol: identical fold seeds, per-subject normalization, augmentation, and training loop shared across every model — verified by parameter-identity tests, not just re-implementation
 
-Statistical significance of the improvement was confirmed using **Wilcoxon
-signed-rank tests with Holm-Bonferroni correction**, ruling out chance as an
-explanation for the gains.
+Setting	Proposed	Best Baseline	Margin
+Binary, 10-fold	85.24%	84.78% (GMU fusion)	+0.46 pt
+Binary, LOSO	77.72%	76.87% (GMU fusion)	+0.85 pt
+Ternary, 10-fold	77.63%	70.43% (MulT)	+7.20 pt (p<0.05)
+Ternary, LOSO	64.25%	54.52% (GMU fusion)	+9.73 pt (p<0.01)
+
+Statistical significance confirmed via paired Wilcoxon signed-rank tests, Holm-Bonferroni corrected within each experiment.
+
+<details> <summary>Full baseline comparison (16 methods, Ternary 10-fold)</summary>
+  
+Method	Year	Modality	Params	Acc %	F1 %
+MulT cross-modal	2019	Both	422,307	70.43	70.37
+GMU gated fusion	2020	Both	121,827	67.63	68.36
+Late fusion	—	Both	113,958	66.36	67.12
+ATCNet	2023	ECG	107,951	58.45	58.89
+ATCNet	2023	EEG	107,983	57.51	5
+
+(Full results across all four experiments — binary/ternary × 10-fold/LOSO — available in `results/baseline_table.txt`.)
+ </details>
 
 ### Ablation Study
 
