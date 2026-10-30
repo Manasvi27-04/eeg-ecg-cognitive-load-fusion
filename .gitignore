@@ -1,0 +1,25 @@
+# Environments and caches
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Dataset (CL-Drive is not redistributed; see README)
+data/
+
+# Large / generated artifacts
+checkpoints/
+logs/
+results_smoke/
+*.pt
+*.pth
+*.ckpt
+
+# Editor backups
+*.bak
+*.bak2
+*.bak3
+*.sh.bak*
+.DS_Store
+Thumbs.db
