@@ -121,6 +121,8 @@ Margin over the best baseline in each column:
 
 Gains are significant under the corrected Wilcoxon tests on the ternary task (all 16 baselines on 10-fold; 15 of 16 under LOSO). On the binary task the margins are small.
 
+The full comparison, including **macro-F1**, per-method accuracy deltas and significance stars for all four settings, is in [`baseline_table.txt`](baseline_table.txt).
+
 **Per-subject ternary LOSO:** accuracy ranges from 43.82% to 83.69% (mean 64.79%); the proposed model beats the mean of the best multimodal baseline (GMU) on 19 of 21 held-out subjects. Ternary LOSO macro-F1 is 45.00%.
 
 ## Ablation study
